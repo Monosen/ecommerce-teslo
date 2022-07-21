@@ -14,7 +14,6 @@ import { CartList, OrderSummary } from '../../components/cart'
 import { ShopLayout } from '../../components/layouts'
 import { useContext, useEffect } from 'react'
 import { CartContext } from '../../context'
-import { countries } from '../../utils'
 import Cookies from 'js-cookie'
 
 const SummaryPage = () => {

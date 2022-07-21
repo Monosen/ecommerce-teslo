@@ -1,5 +1,5 @@
-import { CartState, ShippingAddress } from './'
-import { ICartProduct } from '../../interface'
+import { CartState } from './'
+import { ICartProduct, ShippingAddress } from '../../interface'
 
 type CartActionType =
 	| {

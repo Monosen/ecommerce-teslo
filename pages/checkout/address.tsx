@@ -1,15 +1,7 @@
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import { useForm } from 'react-hook-form'
-import {
-	Box,
-	Button,
-	FormControl,
-	Grid,
-	MenuItem,
-	TextField,
-	Typography
-} from '@mui/material'
+import { Box, Button, Grid, TextField, Typography } from '@mui/material'
 
 import { ShopLayout } from '../../components/layouts'
 import { countries } from '../../utils'

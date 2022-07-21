@@ -37,6 +37,7 @@ const RegisterPage = () => {
 		formState: { errors }
 	} = useForm<FormData>()
 	const [showError, setShowError] = useState(false)
+	/* eslint-disable no-unused-vars */
 	const [errorMessage, setErrorMessage] = useState('')
 
 	const onRegisterForm = async ({ name, email, password }: FormData) => {
