@@ -27,7 +27,7 @@ export default function handler(
 }
 
 const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-	const { orderItem, total } = req.body as IOrder
+	const { orderItems, total } = req.body as IOrder
 
 	const session: any = await getSession({ req })
 
@@ -35,13 +35,13 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 		return res.status(401).json({ status: 'fail', message: 'Unauthorized' })
 	}
 
-	const productsIds = orderItem.map(p => p._id)
+	const productsIds = orderItems.map(p => p._id)
 
 	db.connect()
 	const dbProducts = await Product.find({ _id: { $in: productsIds } })
 
 	try {
-		const subTotal = orderItem.reduce((acc, product) => {
+		const subTotal = orderItems.reduce((acc, product) => {
 			const currentPrice = dbProducts.find(
 				p => p.id.toString() === product._id.toString()
 			)!.price

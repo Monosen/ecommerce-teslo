@@ -11,7 +11,7 @@ export interface ShippingAddress {
 	phone: string
 }
 
-export interface IOrderItem {
+export interface IOrderItems {
 	_id: string
 	title: string
 	size: ISize
@@ -25,7 +25,7 @@ export interface IOrderItem {
 export interface IOrder {
 	_id?: string
 	user?: IUser | string
-	orderItem: IOrderItem[]
+	orderItems: IOrderItems[]
 	shippingAddress: ShippingAddress
 	paymentResult?: string
 	numberOfItems: number

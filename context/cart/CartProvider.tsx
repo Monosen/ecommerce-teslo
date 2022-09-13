@@ -152,7 +152,7 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
 		}
 
 		const body: IOrder = {
-			orderItem: state.cart.map(p => ({
+			orderItems: state.cart.map(p => ({
 				...p,
 				size: p.size!
 			})),
