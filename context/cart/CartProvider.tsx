@@ -1,7 +1,14 @@
 import { FC, PropsWithChildren, useEffect, useReducer } from 'react'
 import Cookie from 'js-cookie'
-import { ICartProduct, ShippingAddress } from '../../interface'
+import {
+	ICartProduct,
+	IOrder,
+	IResOrder,
+	ShippingAddress
+} from '../../interface'
 import { CartContext, cartReducer } from './'
+import { tesloApi } from '../../api'
+import axios from 'axios'
 
 export interface CartState {
 	isLoaded: boolean
@@ -136,6 +143,53 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
 		dispatch({ type: '[Cart] - update Address', payload: address })
 	}
 
+	const createOrder = async (): Promise<{
+		hasError: boolean
+		message: string
+	}> => {
+		if (!state.shippingAddress) {
+			throw new Error('Please select shipping address')
+		}
+
+		const body: IOrder = {
+			orderItem: state.cart.map(p => ({
+				...p,
+				size: p.size!
+			})),
+			shippingAddress: state.shippingAddress,
+			numberOfItems: state.numberOfItems,
+			subTotal: state.subTotal,
+			tax: state.tax,
+			total: state.total,
+			isPaid: false
+		}
+
+		try {
+			const { data } = await tesloApi.post<IResOrder>('/order', body)
+
+			console.log({ data })
+			return {
+				hasError: false,
+				message: data.data._id!
+			}
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				return {
+					hasError: true,
+					message: (error.response as { data: { message: string } }).data
+						.message
+				}
+			}
+
+			console.log(error)
+
+			return {
+				hasError: true,
+				message: 'Error no controlado'
+			}
+		}
+	}
+
 	return (
 		<CartContext.Provider
 			value={{
@@ -143,7 +197,8 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
 				addProductToCart,
 				updateCartQuantity,
 				removeCartProduct,
-				updateAddress
+				updateAddress,
+				createOrder
 			}}
 		>
 			{children}

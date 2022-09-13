@@ -5,6 +5,7 @@ import {
 	Button,
 	Card,
 	CardContent,
+	Chip,
 	Divider,
 	Grid,
 	Link,
@@ -12,19 +13,35 @@ import {
 } from '@mui/material'
 import { CartList, OrderSummary } from '../../components/cart'
 import { ShopLayout } from '../../components/layouts'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { CartContext } from '../../context'
 import Cookies from 'js-cookie'
 
 const SummaryPage = () => {
 	const router = useRouter()
-	const { shippingAddress, numberOfItems } = useContext(CartContext)
+	const { shippingAddress, numberOfItems, createOrder } =
+		useContext(CartContext)
+
+	const [isPosting, setIsPosting] = useState(false)
+	const [errorMesage, setErrorMesage] = useState('')
 
 	useEffect(() => {
 		if (!Cookies.get('address')) {
 			router.push('/checkout/address')
 		}
 	}, [router])
+
+	const onCreateOrder = async () => {
+		setIsPosting(true)
+		const { hasError, message } = await createOrder()
+
+		if (hasError) {
+			setIsPosting(false)
+			setErrorMesage(message)
+			return
+		}
+		router.replace(`/orders/${message}`)
+	}
 
 	if (!shippingAddress) {
 		return <></>
@@ -88,10 +105,21 @@ const SummaryPage = () => {
 
 							<OrderSummary />
 
-							<Box sx={{ mt: 3 }}>
-								<Button color='secondary' className='circular-btn' fullWidth>
+							<Box sx={{ mt: 3 }} display='flex' flexDirection='column'>
+								<Button
+									onClick={onCreateOrder}
+									color='secondary'
+									className='circular-btn'
+									fullWidth
+									disabled={isPosting}
+								>
 									Confirmar Orden
 								</Button>
+								<Chip
+									color='error'
+									label={errorMesage}
+									sx={{ display: errorMesage ? 'flex' : 'none', mt: 1 }}
+								/>
 							</Box>
 						</CardContent>
 					</Card>

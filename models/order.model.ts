@@ -3,10 +3,6 @@ import { IOrder } from '../interface'
 
 const orderSchema = new Schema(
 	{
-		_id: {
-			type: String,
-			required: true
-		},
 		user: {
 			type: Schema.Types.ObjectId,
 			ref: 'User',
@@ -77,10 +73,6 @@ const orderSchema = new Schema(
 				type: String,
 				required: true
 			}
-		},
-		paymentResult: {
-			type: String,
-			required: true
 		},
 		numberOfItems: {
 			type: Number,
