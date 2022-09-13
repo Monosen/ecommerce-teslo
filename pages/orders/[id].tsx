@@ -59,7 +59,7 @@ const OrderPage: FC<Props> = ({ order }) => {
 				/>
 			)}
 
-			<Grid container>
+			<Grid container className='fadeIn'>
 				<Grid item xs={12} sm={7}>
 					<CartList editable={false} products={orderItems} />
 				</Grid>
