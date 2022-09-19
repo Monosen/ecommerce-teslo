@@ -14,7 +14,17 @@ export const getProductBySlug = async (
 	}
 
 	product.images = product.images.map(image => {
-		return image.includes('http') ? image : `/products/${image}`
+		if (image.includes('http')) {
+			return image
+		}
+
+		if (!image.includes('http')) {
+			if (!image.includes('/products/')) {
+				return `/products/${image}`
+			}
+		}
+
+		return image
 	})
 
 	return JSON.parse(JSON.stringify(product))

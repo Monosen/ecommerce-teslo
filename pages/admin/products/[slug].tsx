@@ -115,7 +115,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 		setIsSaving(true)
 
 		try {
-			const { data } = await tesloApi({
+			await tesloApi({
 				url: '/admin/products',
 				method: formData._id ? 'PUT' : 'POST',
 				data: formData
@@ -127,7 +127,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 				setIsSaving(false)
 				alert('Product updated successfully')
 			}
-			console.log('🚀 ~ file: [slug].tsx ~ line 119 ~ onSubmit ~ data', data)
 		} catch (error) {
 			console.log(error)
 			setIsSaving(false)
@@ -443,6 +442,10 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 		product = tempProduct
 	} else {
 		product = await dbProducts.getProductBySlug(slug.toString())
+		console.log(
+			'🚀 ~ file: [slug].tsx ~ line 446 ~ constgetServerSideProps:GetServerSideProps= ~ product',
+			product
+		)
 	}
 
 	if (!product) {
