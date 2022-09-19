@@ -38,9 +38,7 @@ const getProductBySlug = async (
 		}
 
 		product.images = product.images.map(image => {
-			return image.includes('http')
-				? image
-				: `${process.env.HOST_NAME}/products/${image}`
+			return image.includes('http') ? image : `/products/${image}`
 		})
 
 		res.status(200).json({ status: 'success', data: product })
