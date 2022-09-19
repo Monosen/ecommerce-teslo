@@ -41,9 +41,13 @@ const LoginPage = () => {
 	const [providers, setProviders] = useState<any>({})
 
 	useEffect(() => {
-		getProviders().then(prov => {
-			setProviders(prov)
-		})
+		getProviders()
+			.then(prov => {
+				setProviders(prov)
+			})
+			.catch(err => {
+				console.log(err)
+			})
 	}, [])
 
 	const onLoginUser = async ({ email, password }: FormData) => {
