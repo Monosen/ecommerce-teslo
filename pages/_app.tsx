@@ -10,7 +10,7 @@ import { CustomProvider, CartProvider, AuthProvider } from '../context'
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	return (
-		<SessionProvider session={session} basePath='/api/auth'>
+		<SessionProvider session={session}>
 			<PayPalScriptProvider
 				options={{
 					'client-id': process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || ''
