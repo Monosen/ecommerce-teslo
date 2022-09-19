@@ -1,17 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { db, seedDatabase } from '../../database'
 import { Product, User } from '../../models'
+import { IResMessage } from '../../interface'
 
-type Data = {
-	name: string
-}
+type Data = IResMessage
 
 export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse<Data>
 ) {
 	if (process.env.NODE_ENV === 'production') {
-		return res.status(401).json({ name: 'no tiene acceso a este servicio' })
+		return res
+			.status(401)
+			.json({ status: 'fail', message: 'no tiene acceso a este servicio' })
 	}
 
 	await db.connect()
@@ -23,5 +24,5 @@ export default async function handler(
 
 	await db.disconnect()
 
-	res.status(200).json({ name: 'Example' })
+	res.status(200).json({ status: 'success', message: 'seeded' })
 }

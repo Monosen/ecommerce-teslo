@@ -1,33 +1,29 @@
-import { FC, useState } from 'react'
-import { PayPalButtons } from '@paypal/react-paypal-js'
-import { OrderResponseBody } from '@paypal/paypal-js/types'
+import { FC } from 'react'
 import {
 	Box,
 	Card,
 	CardContent,
 	Chip,
-	CircularProgress,
 	Divider,
 	Grid,
 	Typography
 } from '@mui/material'
-import { CartList, OrderSummary } from '../../components/cart'
-import { ShopLayout } from '../../components/layouts'
-import { CreditCardOffOutlined } from '@mui/icons-material'
+import { CartList, OrderSummary } from '../../../components/cart'
+import { AdminLayout } from '../../../components/layouts'
+import {
+	AirplaneTicketOutlined,
+	CreditCardOffOutlined
+} from '@mui/icons-material'
 
 import { GetServerSideProps } from 'next'
-import { getSession } from 'next-auth/react'
-import { dbOrders } from '../../database'
-import { IOrder } from '../../interface'
-import { tesloApi } from '../../api'
-import { useRouter } from 'next/router'
+import { dbOrders } from '../../../database'
+import { IOrder } from '../../../interface'
 
 interface Props {
 	order: IOrder
 }
 
 const OrderPage: FC<Props> = ({ order }) => {
-	const router = useRouter()
 	const {
 		isPaid,
 		_id,
@@ -38,36 +34,13 @@ const OrderPage: FC<Props> = ({ order }) => {
 		tax,
 		total
 	} = order
-	const [isPaying, setIsPaying] = useState(false)
-
-	const onOrderCompleted = async (details: OrderResponseBody) => {
-		if (details.status !== 'COMPLETED') {
-			return alert('Payment failed')
-		}
-		setIsPaying(true)
-
-		try {
-			await tesloApi.post(`/order/pay`, {
-				transactionId: details.id,
-				orderId: _id
-			})
-
-			router.reload()
-		} catch (error) {
-			setIsPaying(false)
-			console.log(error)
-		}
-	}
 
 	return (
-		<ShopLayout
+		<AdminLayout
 			title='Resumen de la orden 3242123123'
-			pageDescription={'Resumen de la orden'}
+			icon={<AirplaneTicketOutlined />}
+			subTitle={`Order Id: ${_id}`}
 		>
-			<Typography variant='h1' component='h1'>
-				Order: {_id}
-			</Typography>
-
 			{isPaid ? (
 				<Chip
 					sx={{ my: 2 }}
@@ -125,20 +98,7 @@ const OrderPage: FC<Props> = ({ order }) => {
 							/>
 
 							<Box sx={{ mt: 3 }} display='flex' flexDirection='column'>
-								{isPaying && (
-									<Box
-										display='flex'
-										justifyContent='center'
-										className='fadeIn'
-									>
-										<CircularProgress />
-									</Box>
-								)}
-
-								<Box
-									sx={{ display: isPaying ? 'none' : 'flex' }}
-									flexDirection='column'
-								>
+								<Box sx={{ display: 'flex' }} flexDirection='column'>
 									{isPaid ? (
 										<Chip
 											sx={{ my: 2 }}
@@ -148,23 +108,12 @@ const OrderPage: FC<Props> = ({ order }) => {
 											icon={<CreditCardOffOutlined />}
 										/>
 									) : (
-										<PayPalButtons
-											createOrder={(data, actions) => {
-												return actions.order.create({
-													purchase_units: [
-														{
-															amount: {
-																value: `${total}`
-															}
-														}
-													]
-												})
-											}}
-											onApprove={(data, actions) => {
-												return actions.order!.capture().then(details => {
-													onOrderCompleted(details)
-												})
-											}}
+										<Chip
+											sx={{ my: 2 }}
+											label='Pendiente de pago'
+											variant='outlined'
+											color='error'
+											icon={<CreditCardOffOutlined />}
 										/>
 									)}
 								</Box>
@@ -173,7 +122,7 @@ const OrderPage: FC<Props> = ({ order }) => {
 					</Card>
 				</Grid>
 			</Grid>
-		</ShopLayout>
+		</AdminLayout>
 	)
 }
 
@@ -183,32 +132,12 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
 	const { id = '' } = query
 
-	const session: any = await getSession({ req })
-
-	if (!session) {
-		return {
-			redirect: {
-				destination: `/auth/login?p=/orders/${id}`,
-				permanent: false
-			}
-		}
-	}
-
 	const order = await dbOrders.getOrderById(id.toString())
 
 	if (!order) {
 		return {
 			redirect: {
-				destination: `/orders/history`,
-				permanent: false
-			}
-		}
-	}
-
-	if (order.user !== session.user._id) {
-		return {
-			redirect: {
-				destination: `/orders/history`,
+				destination: `/admin/orders`,
 				permanent: false
 			}
 		}

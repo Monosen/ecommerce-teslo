@@ -1,4 +1,4 @@
-import { IProduct, IOrder } from './'
+import { IProduct, IOrder, IUser } from './'
 
 type ResStatus = 'success' | 'error' | 'fail'
 
@@ -24,4 +24,12 @@ export interface IResOrder extends IRes {
 
 export interface IResOrders extends IRes {
 	data: IOrder[]
+}
+
+export interface IResUser extends IRes {
+	data: IUser
+}
+
+export interface IResUsers extends IRes {
+	data: IUser[]
 }

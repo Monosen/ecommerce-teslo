@@ -13,6 +13,12 @@ export const getProductBySlug = async (
 		return null
 	}
 
+	product.images = product.images.map(image => {
+		return image.includes('http')
+			? image
+			: `${process.env.HOST_NAME}/products/${image}`
+	})
+
 	return JSON.parse(JSON.stringify(product))
 }
 
@@ -36,7 +42,18 @@ export const getProductsByTerm = async (term: string): Promise<IProduct[]> => {
 		.select('title images price inStock slig -_id')
 		.lean()
 	await db.disconnect()
-	return products
+
+	const uploadProducts = products.map(product => {
+		product.images = product.images.map(image => {
+			return image.includes('http')
+				? image
+				: `${process.env.HOST_NAME}/products/${image}`
+		})
+
+		return product
+	})
+
+	return uploadProducts
 }
 
 export const getAllProducts = async (): Promise<IProduct[]> => {
@@ -45,5 +62,15 @@ export const getAllProducts = async (): Promise<IProduct[]> => {
 		.select('title images price inStock slig -_id')
 		.lean()
 	await db.disconnect()
-	return products
+	const uploadProducts = products.map(product => {
+		product.images = product.images.map(image => {
+			return image.includes('http')
+				? image
+				: `${process.env.HOST_NAME}/products/${image}`
+		})
+
+		return product
+	})
+
+	return JSON.parse(JSON.stringify(uploadProducts))
 }
